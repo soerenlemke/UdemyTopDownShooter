@@ -3,17 +3,22 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private const float Gravity = 9.81f;
+    
     private static readonly int XVelocity = Animator.StringToHash("xVelocity");
     private static readonly int ZVelocity = Animator.StringToHash("zVelocity");
-    
+    private static readonly int IsRunning = Animator.StringToHash("isRunning");
+
     private PlayerControls _controls;
     private CharacterController _characterController;
     private Animator _animator;
 
     [Header("Movement info")]
     [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed;
+    private float _speed;
     private Vector3 _movementDirection;
     private float _verticalVelocity;
+    private bool _isRunning;
 
     [Header("Aim info")] 
     [SerializeField] private Transform aim;
@@ -25,6 +30,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        AssignInputEvents();
+    }
+
+    private void AssignInputEvents()
+    {
         _controls = new PlayerControls();
         
         _controls.Character.Movement.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
@@ -32,12 +42,25 @@ public class PlayerMovement : MonoBehaviour
         
         _controls.Character.Aim.performed += ctx => _aimInput = ctx.ReadValue<Vector2>();
         _controls.Character.Aim.canceled += _ => _aimInput = Vector2.zero;
+        
+        _controls.Character.Run.performed += _ =>
+        {
+                _speed = runSpeed;
+                _isRunning = true;
+        };
+        _controls.Character.Run.canceled += _ =>
+        {
+            _speed = walkSpeed;
+            _isRunning = false;
+        };
     }
 
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
+
+        _speed = walkSpeed;
     }
 
     private void Update()
@@ -54,6 +77,9 @@ public class PlayerMovement : MonoBehaviour
         
         _animator.SetFloat(XVelocity, xVelocity, .1f, Time.deltaTime);
         _animator.SetFloat(ZVelocity, zVelocity,  .1f, Time.deltaTime);
+
+        var playRunAnimation = _isRunning && _movementDirection.magnitude > 0;
+        _animator.SetBool(IsRunning, playRunAnimation);
     }
 
     private void AimTowardsMouse()
@@ -78,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (_movementDirection.magnitude > 0)
         {
-            _characterController.Move(_movementDirection * (Time.deltaTime * walkSpeed));
+            _characterController.Move(_movementDirection * (Time.deltaTime * _speed));
         }
     }
 
