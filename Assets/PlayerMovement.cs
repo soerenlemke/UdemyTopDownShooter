@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private static readonly int XVelocity = Animator.StringToHash("xVelocity");
     private static readonly int ZVelocity = Animator.StringToHash("zVelocity");
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
+    private static readonly int Fire = Animator.StringToHash("Fire");
 
     private PlayerControls _controls;
     private CharacterController _characterController;
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private float _verticalVelocity;
     private bool _isRunning;
 
-    [Header("Aim info")] 
+    [Header("Aim info")]
     [SerializeField] private Transform aim;
     [SerializeField] private LayerMask aimLayerMask;
     private Vector3 _lookingDirection;
@@ -36,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
     private void AssignInputEvents()
     {
         _controls = new PlayerControls();
+
+        _controls.Character.Fire.performed += _ => Shoot();
         
         _controls.Character.Movement.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
         _controls.Character.Movement.canceled += _ => _moveInput = Vector2.zero;
@@ -70,16 +73,28 @@ public class PlayerMovement : MonoBehaviour
         AnimatorControllers();
     }
 
-    private void AnimatorControllers()
+    private void ApplyMovement()
     {
-        var xVelocity = Vector3.Dot(_movementDirection.normalized, transform.right);
-        var zVelocity = Vector3.Dot(_movementDirection.normalized, transform.forward);
-        
-        _animator.SetFloat(XVelocity, xVelocity, .1f, Time.deltaTime);
-        _animator.SetFloat(ZVelocity, zVelocity,  .1f, Time.deltaTime);
+        _movementDirection = new Vector3(_moveInput.x, 0, _moveInput.y);
+        ApplyGravity();
 
-        var playRunAnimation = _isRunning && _movementDirection.magnitude > 0;
-        _animator.SetBool(IsRunning, playRunAnimation);
+        if (_movementDirection.magnitude > 0)
+        {
+            _characterController.Move(_movementDirection * (Time.deltaTime * _speed));
+        }
+    }
+    
+    private void ApplyGravity()
+    {
+        if (!_characterController.isGrounded)
+        {
+            _verticalVelocity -= Gravity * Time.deltaTime;
+            _movementDirection.y = _verticalVelocity;
+        }
+        else
+        {
+            _verticalVelocity = -0.5f;
+        }
     }
 
     private void AimTowardsMouse()
@@ -96,29 +111,22 @@ public class PlayerMovement : MonoBehaviour
             aim.position = new Vector3(hitInfo.point.x, transform.position.y, hitInfo.point.z);
         }
     }
-
-    private void ApplyMovement()
+    
+    private void AnimatorControllers()
     {
-        _movementDirection = new Vector3(_moveInput.x, 0, _moveInput.y);
-        ApplyGravity();
+        var xVelocity = Vector3.Dot(_movementDirection.normalized, transform.right);
+        var zVelocity = Vector3.Dot(_movementDirection.normalized, transform.forward);
+        
+        _animator.SetFloat(XVelocity, xVelocity, .1f, Time.deltaTime);
+        _animator.SetFloat(ZVelocity, zVelocity,  .1f, Time.deltaTime);
 
-        if (_movementDirection.magnitude > 0)
-        {
-            _characterController.Move(_movementDirection * (Time.deltaTime * _speed));
-        }
+        var playRunAnimation = _isRunning && _movementDirection.magnitude > 0;
+        _animator.SetBool(IsRunning, playRunAnimation);
     }
 
-    private void ApplyGravity()
+    private void Shoot()
     {
-        if (!_characterController.isGrounded)
-        {
-            _verticalVelocity -= Gravity * Time.deltaTime;
-            _movementDirection.y = _verticalVelocity;
-        }
-        else
-        {
-            _verticalVelocity = -0.5f;
-        }
+        _animator.SetTrigger(Fire);
     }
 
     private void OnEnable()
