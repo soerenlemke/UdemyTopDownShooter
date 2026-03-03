@@ -3,9 +3,12 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private const float Gravity = 9.81f;
+    private static readonly int XVelocity = Animator.StringToHash("xVelocity");
+    private static readonly int ZVelocity = Animator.StringToHash("zVelocity");
     
     private PlayerControls _controls;
     private CharacterController _characterController;
+    private Animator _animator;
 
     [Header("Movement info")]
     [SerializeField] private float walkSpeed;
@@ -34,12 +37,23 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
         ApplyMovement();
         AimTowardsMouse();
+        AnimatorControllers();
+    }
+
+    private void AnimatorControllers()
+    {
+        var xVelocity = Vector3.Dot(_movementDirection.normalized, transform.right);
+        var zVelocity = Vector3.Dot(_movementDirection.normalized, transform.forward);
+        
+        _animator.SetFloat(XVelocity, xVelocity, .1f, Time.deltaTime);
+        _animator.SetFloat(ZVelocity, zVelocity,  .1f, Time.deltaTime);
     }
 
     private void AimTowardsMouse()
