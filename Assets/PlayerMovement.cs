@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private Player _player;
+    
     private const float Gravity = 9.81f;
     
     private static readonly int XVelocity = Animator.StringToHash("xVelocity");
     private static readonly int ZVelocity = Animator.StringToHash("zVelocity");
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
-    private static readonly int Fire = Animator.StringToHash("Fire");
+    
 
     private PlayerControls _controls;
     private CharacterController _characterController;
@@ -29,16 +31,28 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _moveInput;
     private Vector2 _aimInput;
 
-    private void Awake()
+    private void Start()
     {
+        _player = GetComponent<Player>();
+        
+        _characterController = GetComponent<CharacterController>();
+        _animator = GetComponentInChildren<Animator>();
+
+        _speed = walkSpeed;
+        
         AssignInputEvents();
     }
 
+    private void Update()
+    {
+        ApplyMovement();
+        AimTowardsMouse();
+        AnimatorControllers();
+    }
+    
     private void AssignInputEvents()
     {
-        _controls = new PlayerControls();
-
-        _controls.Character.Fire.performed += _ => Shoot();
+        _controls = _player.Controls;
         
         _controls.Character.Movement.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
         _controls.Character.Movement.canceled += _ => _moveInput = Vector2.zero;
@@ -48,29 +62,14 @@ public class PlayerMovement : MonoBehaviour
         
         _controls.Character.Run.performed += _ =>
         {
-                _speed = runSpeed;
-                _isRunning = true;
+            _speed = runSpeed;
+            _isRunning = true;
         };
         _controls.Character.Run.canceled += _ =>
         {
             _speed = walkSpeed;
             _isRunning = false;
         };
-    }
-
-    private void Start()
-    {
-        _characterController = GetComponent<CharacterController>();
-        _animator = GetComponentInChildren<Animator>();
-
-        _speed = walkSpeed;
-    }
-
-    private void Update()
-    {
-        ApplyMovement();
-        AimTowardsMouse();
-        AnimatorControllers();
     }
 
     private void ApplyMovement()
@@ -122,20 +121,5 @@ public class PlayerMovement : MonoBehaviour
 
         var playRunAnimation = _isRunning && _movementDirection.magnitude > 0;
         _animator.SetBool(IsRunning, playRunAnimation);
-    }
-
-    private void Shoot()
-    {
-        _animator.SetTrigger(Fire);
-    }
-
-    private void OnEnable()
-    {
-        _controls.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _controls.Disable();
     }
 }

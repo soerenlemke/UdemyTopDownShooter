@@ -1103,7 +1103,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1263780960}
+  - component: {fileID: 1263780963}
   - component: {fileID: 1263780956}
+  - component: {fileID: 1263780962}
   - component: {fileID: 1263780961}
   m_Layer: 0
   m_Name: Player
@@ -1171,6 +1173,30 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.66, z: 0}
+--- !u!114 &1263780962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263780955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87879098ea6d4e188adf812cf513069e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWeaponController
+--- !u!114 &1263780963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263780955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ed06b368b3a4e49a1b812511d9a401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1 &1531657406
 GameObject:
   m_ObjectHideFlags: 0
