@@ -22,7 +22,7 @@ public class WeaponVisualController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4))
             SwitchOn(shotgun);
         if (Input.GetKeyDown(KeyCode.Alpha5))
-            SwitchOn(autoRifle);
+            SwitchOn(rifle);
     }
 
     private void SwitchOn(Transform gunTransform)
