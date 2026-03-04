@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f2343237f52325746be090015532ee6c
+guid: bb2789ca010df8140bbb470cc93714b2
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Shotgun-Rifle Fire Idle
+      name: Sniper-Rifle Fire Idle
       takeName: mixamo.com
       internalID: -203655887218126122
-      firstFrame: 0
-      lastFrame: 31
+      firstFrame: 2
+      lastFrame: 28
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
