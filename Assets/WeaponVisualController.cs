@@ -4,7 +4,9 @@ using UnityEngine.Animations.Rigging;
 public class WeaponVisualController : MonoBehaviour
 {
     private static readonly int Reload = Animator.StringToHash("Reload");
-    
+    private static readonly int WeaponGrabType = Animator.StringToHash("WeaponGrabType");
+    private static readonly int WeaponGrab = Animator.StringToHash("WeaponGrab");
+
     private Animator _animator;
     
     [SerializeField] private Transform[] gunTransforms;
@@ -39,7 +41,7 @@ public class WeaponVisualController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             _animator.SetTrigger(Reload);
-            _rig.weight = 0.15f;
+            PauseRig();
         }
 
         if (_rigShouldBeIncreased)
@@ -51,6 +53,18 @@ public class WeaponVisualController : MonoBehaviour
                 _rigShouldBeIncreased = false;
             }
         }
+    }
+
+    private void PauseRig()
+    {
+        _rig.weight = 0.15f;
+    }
+
+    private void PlayWeaponGrabAnimation(GrabType grabType)
+    {
+        PauseRig();
+        _animator.SetFloat(WeaponGrabType, (float)grabType);
+        _animator.SetTrigger(WeaponGrab);
     }
     
     public void ReturnRigWeihtToOne() => _rigShouldBeIncreased = true;
@@ -95,30 +109,41 @@ public class WeaponVisualController : MonoBehaviour
         {
             SwitchOn(pistol);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.SideGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             SwitchOn(revolver);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.SideGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             SwitchOn(autoRifle);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SwitchOn(shotgun);
             SwitchAnimationLayer(2);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             SwitchOn(rifle);
             SwitchAnimationLayer(3);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
     }
+}
+
+public enum GrabType
+{
+    SideGrab,
+    BackGrab
 }
