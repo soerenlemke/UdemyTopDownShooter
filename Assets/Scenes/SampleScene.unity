@@ -1222,7 +1222,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 929781143}
-  - component: {fileID: 929781144}
   m_Layer: 0
   m_Name: Weapon_Holder
   m_TagString: Untagged
@@ -1250,30 +1249,6 @@ Transform:
   - {fileID: 879788614}
   m_Father: {fileID: 5155751598995583282}
   m_LocalEulerAnglesHint: {x: -90, y: 110, z: -15.742}
---- !u!114 &929781144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 929781142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8610b1605478e74186455a3b93f4ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  gunTransforms:
-  - {fileID: 207125496}
-  - {fileID: 103417713}
-  - {fileID: 59176873}
-  - {fileID: 1914990426}
-  - {fileID: 879788614}
-  pistol: {fileID: 207125496}
-  revolver: {fileID: 103417713}
-  autoRifle: {fileID: 59176873}
-  shotgun: {fileID: 1914990426}
-  rifle: {fileID: 879788614}
-  leftHand: {fileID: 296442940}
 --- !u!1 &1025363584
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,6 +1660,7 @@ GameObject:
   - component: {fileID: 1263780956}
   - component: {fileID: 1263780962}
   - component: {fileID: 1263780961}
+  - component: {fileID: 1263780964}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1775,6 +1751,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06ed06b368b3a4e49a1b812511d9a401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+--- !u!114 &1263780964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263780955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8610b1605478e74186455a3b93f4ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  gunTransforms:
+  - {fileID: 207125496}
+  - {fileID: 103417713}
+  - {fileID: 59176873}
+  - {fileID: 1914990426}
+  - {fileID: 879788614}
+  pistol: {fileID: 207125496}
+  revolver: {fileID: 103417713}
+  autoRifle: {fileID: 59176873}
+  shotgun: {fileID: 1914990426}
+  rifle: {fileID: 879788614}
+  leftHand: {fileID: 296442940}
+  rigIncreaseStep: 2.75
 --- !u!1 &1531657406
 GameObject:
   m_ObjectHideFlags: 0
@@ -4408,6 +4409,7 @@ GameObject:
   - component: {fileID: 6463788566603245842}
   - component: {fileID: 6463788566603245844}
   - component: {fileID: 6463788566603245843}
+  - component: {fileID: 6463788566603245845}
   m_Layer: 0
   m_Name: character_main
   m_TagString: Untagged
@@ -4610,7 +4612,12 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'mixamorig:Head'\n\tTransform 'mixamorig:LeftArm'\n\tTransform
+    'mixamorig:RightHand'\n\tTransform 'mixamorig:LeftForeArm'\n\tTransform 'mixamorig:RightForeArm'\n\tTransform
+    'mixamorig:Neck'\n\tTransform 'mixamorig:LeftHand'\n\tTransform 'mixamorig:Head'\n\tTransform
+    'mixamorig:LeftArm'\n\tTransform 'mixamorig:RightHand'\n\tand more ..."
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -4698,6 +4705,18 @@ MonoBehaviour:
   - m_Rig: {fileID: 2004016469}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &6463788566603245845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5978578915318199211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf0dfcca4d04ea2a888009f1bbf81c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.PlayerAnimationEvents
 --- !u!4 &6570099197747338901
 Transform:
   m_ObjectHideFlags: 0

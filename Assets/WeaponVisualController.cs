@@ -1,12 +1,13 @@
-using System;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class WeaponVisualController : MonoBehaviour
 {
+    private static readonly int Reload = Animator.StringToHash("Reload");
+    
     private Animator _animator;
     
     [SerializeField] private Transform[] gunTransforms;
-    
     [SerializeField]  private Transform pistol;
     [SerializeField]  private Transform revolver;
     [SerializeField]  private Transform autoRifle;
@@ -18,45 +19,41 @@ public class WeaponVisualController : MonoBehaviour
     [Header("Left hand IK")]
     [SerializeField] private Transform leftHand;
 
+    [Header("Rig")]
+    [SerializeField] private float rigIncreaseStep;
+    private Rig _rig;
+    private bool _rigShouldBeIncreased;
+
     private void Start()
     {
         SwitchOn(pistol);
         
-        _animator = GetComponentInParent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
+        _rig = GetComponentInChildren<Rig>();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        CheckWeaponSwitch();
+
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            SwitchOn(pistol);
-            SwitchAnimationLayer(1);
+            _animator.SetTrigger(Reload);
+            _rig.weight = 0.15f;
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (_rigShouldBeIncreased)
         {
-            SwitchOn(revolver);
-            SwitchAnimationLayer(1);
-        }
+            _rig.weight += rigIncreaseStep * Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SwitchOn(autoRifle);
-            SwitchAnimationLayer(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SwitchOn(shotgun);
-            SwitchAnimationLayer(2);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SwitchOn(rifle);
-            SwitchAnimationLayer(3);
+            if (_rig.weight >= 1)
+            {
+                _rigShouldBeIncreased = false;
+            }
         }
     }
+    
+    public void ReturnRigWeihtToOne() => _rigShouldBeIncreased = true;
 
     private void SwitchOn(Transform gunTransform)
     {
@@ -90,5 +87,38 @@ public class WeaponVisualController : MonoBehaviour
         }
         
         _animator.SetLayerWeight(layerIndex, 1);
+    }
+    
+    private void CheckWeaponSwitch()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SwitchOn(pistol);
+            SwitchAnimationLayer(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SwitchOn(revolver);
+            SwitchAnimationLayer(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SwitchOn(autoRifle);
+            SwitchAnimationLayer(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            SwitchOn(shotgun);
+            SwitchAnimationLayer(2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            SwitchOn(rifle);
+            SwitchAnimationLayer(3);
+        }
     }
 }
