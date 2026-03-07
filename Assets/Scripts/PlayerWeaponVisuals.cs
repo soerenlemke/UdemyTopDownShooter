@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using UnityEngine.Serialization;
 
-public class WeaponVisualController : MonoBehaviour
+public class PlayerWeaponVisuals : MonoBehaviour
 {
     private static readonly int Reload = Animator.StringToHash("Reload");
     private static readonly int WeaponGrabType = Animator.StringToHash("WeaponGrabType");
@@ -10,6 +9,7 @@ public class WeaponVisualController : MonoBehaviour
     private static readonly int BusyGrabbingWeapon = Animator.StringToHash("BusyGrabbingWeapon");
 
     private Animator _animator;
+    private bool _isGrabbingWeapon;
     
     [SerializeField] private Transform[] gunTransforms;
     [SerializeField]  private Transform pistol;
@@ -20,35 +20,33 @@ public class WeaponVisualController : MonoBehaviour
 
     private Transform _currentGun;
 
+    [Header("Rig")]
+    [SerializeField] private float rigWeightIncreaseRate;
+    private bool _shouldIncreaseRigWeight;
+    private Rig _rig;
+    
     [Header("Left hand IK")] 
+    [SerializeField] private float leftHandIkWeightIncreaseRate;
     [SerializeField] private TwoBoneIKConstraint leftHandIK;
     [SerializeField] private Transform leftHandIKTarget;
-    [SerializeField] private float leftHandIKIncreaseStep;
     private bool _shouldIncreaseLeftHandIKWeight;
-
-    [Header("Rig")]
-    [SerializeField] private float rigIncreaseStep;
-    private Rig _rig;
-    private bool _rigShouldBeIncreased;
-
-    private bool _busyGrabbingWeapon;
 
     private void Start()
     {
-        SwitchOn(pistol);
-        
         _animator = GetComponentInChildren<Animator>();
         _rig = GetComponentInChildren<Rig>();
+        
+        SwitchOn(pistol);
     }
 
     private void Update()
     {
         CheckWeaponSwitch();
 
-        if (Input.GetKeyDown(KeyCode.R) && !_busyGrabbingWeapon)
+        if (Input.GetKeyDown(KeyCode.R) && !_isGrabbingWeapon)
         {
             _animator.SetTrigger(Reload);
-            PauseRig();
+            ReduceRigWeight();
         }
 
         UpdateRigWeiht();
@@ -59,7 +57,7 @@ public class WeaponVisualController : MonoBehaviour
     {
         if (_shouldIncreaseLeftHandIKWeight)
         {
-            leftHandIK.weight += leftHandIKIncreaseStep * Time.deltaTime;
+            leftHandIK.weight += leftHandIkWeightIncreaseRate * Time.deltaTime;
 
             if (leftHandIK.weight >= 1)
             {
@@ -70,18 +68,18 @@ public class WeaponVisualController : MonoBehaviour
 
     private void UpdateRigWeiht()
     {
-        if (_rigShouldBeIncreased)
+        if (_shouldIncreaseRigWeight)
         {
-            _rig.weight += rigIncreaseStep * Time.deltaTime;
+            _rig.weight += rigWeightIncreaseRate * Time.deltaTime;
 
             if (_rig.weight >= 1)
             {
-                _rigShouldBeIncreased = false;
+                _shouldIncreaseRigWeight = false;
             }
         }
     }
 
-    private void PauseRig()
+    private void ReduceRigWeight()
     {
         _rig.weight = 0.15f;
     }
@@ -89,7 +87,7 @@ public class WeaponVisualController : MonoBehaviour
     private void PlayWeaponGrabAnimation(GrabType grabType)
     {
         leftHandIK.weight = 0;
-        PauseRig();
+        ReduceRigWeight();
         _animator.SetFloat(WeaponGrabType, (float)grabType);
         _animator.SetTrigger(WeaponGrab);
 
@@ -98,12 +96,12 @@ public class WeaponVisualController : MonoBehaviour
 
     public void SetBusyGrabbingWeaponTo(bool busy)
     {
-        _busyGrabbingWeapon = busy;
-        _animator.SetBool(BusyGrabbingWeapon, _busyGrabbingWeapon);
+        _isGrabbingWeapon = busy;
+        _animator.SetBool(BusyGrabbingWeapon, _isGrabbingWeapon);
     }
 
-    public void ReturnRigWeihtToOne() => _rigShouldBeIncreased = true;
-    public void ReturnWeightToLeftHandIK() => _shouldIncreaseLeftHandIKWeight = true;
+    public void MaximizeRigWeight() => _shouldIncreaseRigWeight = true;
+    public void MaximizeLeftHandWeight() => _shouldIncreaseLeftHandIKWeight = true;
 
     private void SwitchOn(Transform gunTransform)
     {
